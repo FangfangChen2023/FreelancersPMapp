@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/empty_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+
+    <TextView
+        android:id="@+id/empty_statement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Let's start a new project!"
+        android:textColor="@color/blue_gray_400"
+        android:textSize="30dp"
+        android:gravity="center"
+        android:outlineProvider="none"
+        />
+
+    <Button
+        style="@style/Widget.Material3.Button.IconButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="add btn in empty page"
+        app:icon="@drawable/baseline_add_24"
+        android:id="@+id/new_proj_emptyPage"
+        />
+
+</LinearLayout>

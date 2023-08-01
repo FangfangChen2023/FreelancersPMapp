@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    >
+
+    <item
+        android:id="@+id/state_changeto_doing"
+        android:title="I'm doing it!"
+        />
+    <item
+        android:id="@+id/state_changeto_done"
+        android:title="I'm done!" />
+    <item
+        android:id="@+id/see_details"
+        android:title="details" />
+    <item
+        android:id="@+id/delete_item"
+        android:title="Delete"
+        android:icon="@drawable/baseline_delete_24"
+        />
+</menu>

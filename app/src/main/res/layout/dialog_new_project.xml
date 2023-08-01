@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialog_new_project"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    android:orientation="vertical">
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:hint="Name" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:hint="Details" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--    <com.google.android.material.textfield.TextInputLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:id="@+id/add_start_date"-->
+    <!--        >-->
+    <!--        <com.google.android.material.textfield.TextInputEditText-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:hint="Start Date"-->
+    <!--            android:background="@color/white"-->
+    <!--            />-->
+    <!--    </com.google.android.material.textfield.TextInputLayout>-->
+
+    <!--    <com.google.android.material.textfield.TextInputLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:id="@+id/add_due_date"-->
+    <!--        >-->
+    <!--        <com.google.android.material.textfield.TextInputEditText-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:hint="Due Date"-->
+    <!--            android:background="@color/white"-->
+    <!--            />-->
+    <!--    </com.google.android.material.textfield.TextInputLayout>-->
+
+
+        <TextView
+            android:id="@+id/add_start_date"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Start Date"
+            android:paddingHorizontal="15dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center_vertical"
+            android:textSize="20sp"
+            />
+    <Button
+        android:id="@+id/startDatePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Date"
+        android:layout_marginLeft="10dp"
+        />
+
+        <TextView
+            android:id="@+id/add_due_date"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Due Date"
+            android:paddingHorizontal="15dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center_vertical"
+            android:textSize="20sp"
+            />
+
+    <Button
+        android:id="@+id/dueDatePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Date"
+        android:layout_marginLeft="10dp"
+        />
+
+
+</LinearLayout>
