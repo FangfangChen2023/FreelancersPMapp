@@ -14,6 +14,7 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
     TextView projItemView;
     ImageView projectImg;
 
+
     public HistoryViewHolder(@NonNull View itemView) {
         super(itemView);
         projItemView = itemView.findViewById(R.id.itemName);

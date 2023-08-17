@@ -2,6 +2,7 @@ package com.chen.freelancerspmapp.Repository;
 
 import android.app.Application;
 import android.service.carrier.CarrierMessagingService;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -88,6 +89,7 @@ AppExecutors executors;
 
     @Override
     public Future updateTask(Task task) {
+        Log.d("Finished Task>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", String.valueOf(task.getActualDueDate()));
         TaskDao taskDao = db.taskDao();
         Future future = databaseWriteExecutor.submit(() ->
         {

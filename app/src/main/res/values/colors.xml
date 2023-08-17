@@ -16,4 +16,8 @@
     <color name="blue_gray_400">#78909C</color>
     <color name="blue_gray_500">#607D8B</color>
     <color name="blue_gray_300">#90A4AE</color>
+
+    <!--    custom themes 2-->
+    <color name="Aquamarine">#1CA8E0</color>
+    <color name="Turquoise">#3CC4F0</color>
 </resources>

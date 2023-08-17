@@ -4,9 +4,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,24 +19,30 @@ import android.view.ViewGroup;
 import com.chen.freelancerspmapp.helper.HistoryRecyclerAdapter;
 import com.chen.freelancerspmapp.Entity.Project;
 import com.chen.freelancerspmapp.Entity.Task;
+import com.chen.freelancerspmapp.viewmodel.MyViewModelFactory;
+import com.chen.freelancerspmapp.viewmodel.ProjectViewModel;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class HistoryFragment extends Fragment {
 
-    ArrayList<Project> historyProjList = new ArrayList<>();
-    Project historyProj;
+    private MutableLiveData<List<Project>> historyProjList = new MutableLiveData<>(new ArrayList<>());
+    private MyViewModelFactory myViewModelFactory;
+    private ProjectViewModel projectViewModel;
+    private View emptyHistory;
+
     private SharedPreferences sharedPreferences;
 
-    public HistoryFragment(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
+    public HistoryFragment() {
     }
 
-//    public static HistoryFragment newInstance() {
-//        HistoryFragment fragment = new HistoryFragment();
-//        return fragment;
-//    }
+    public static HistoryFragment newInstance() {
+        HistoryFragment fragment = new HistoryFragment();
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,22 +55,28 @@ public class HistoryFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_history, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.history_recyclerview);
+        emptyHistory = view.findViewById(R.id.empty_history_page);
+        View historyPage = view.findViewById(R.id.history_page);
 
-        // TODO: Test Data. Delete later.
-        ArrayList<Task> taskList = new ArrayList<>();
-        Task task;
-//        task = new Task("Task 7", "It is the task 7.", new Date(), new Date(), 2);
-//        taskList.add(task);
-//        task = new Task("Task 8", "It is the task 8.", new Date(), new Date(), 2);
-//        taskList.add(task);
+        myViewModelFactory = new MyViewModelFactory(requireActivity().getApplication());
+        projectViewModel = new ViewModelProvider(this, myViewModelFactory).get(ProjectViewModel.class);
+        historyProjList.setValue(projectViewModel.getHistoryProjects());
 
-//        historyProj = new Project("1", "Project 1", new Date(), new Date(), taskList);
-//        historyProjList.add(historyProj);
-//        historyProj = new Project("2","Project 2", new Date(), new Date(), taskList);
-//        historyProjList.add(historyProj);
+//        historyProjList.observe(getViewLifecycleOwner(), new Observer<List<Project>>() {
+//            @Override
+//            public void onChanged(List<Project> projects) {
+//
+//            }
+//        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new HistoryRecyclerAdapter(historyProjList));
+        recyclerView.setAdapter(new HistoryRecyclerAdapter(historyProjList.getValue()));
+
+        if(historyProjList.getValue().size() > 0){
+            historyPage.setVisibility(View.VISIBLE);
+        }else{
+            emptyHistory.setVisibility(View.VISIBLE);
+        }
 
         return view;
     }

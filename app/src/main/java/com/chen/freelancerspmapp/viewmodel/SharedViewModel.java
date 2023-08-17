@@ -62,4 +62,6 @@ public class SharedViewModel extends AndroidViewModel {
         this.currentProj.setValue(currentProj);
     }
 
+//    public
+
 }

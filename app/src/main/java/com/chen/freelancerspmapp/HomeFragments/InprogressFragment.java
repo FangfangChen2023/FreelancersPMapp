@@ -70,6 +70,13 @@ public class InprogressFragment extends Fragment {
 
         doingTaskList.setValue(taskViewModel.getInProgressTasks().getValue());
 
+        taskViewModel.getInProgressTasks().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
+            @Override
+            public void onChanged(List<Task> tasks) {
+                doingTaskList.setValue(taskViewModel.getInProgressTasks().getValue());
+            }
+        });
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         doingRecyclerAdapter = new DoingRecyclerAdapter(doingTaskList.getValue());
 
@@ -83,6 +90,7 @@ public class InprogressFragment extends Fragment {
                         List<Task> temp = doingTaskList.getValue();
                         Task task = temp.remove(position);
                         task.setStatus(2);
+                        task.setActualDueDate(new Date().getTime());
                         taskViewModel.updateTask(task);
                         doingTaskList.setValue(temp);
                         return true;

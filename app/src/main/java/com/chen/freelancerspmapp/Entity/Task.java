@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Date;
 
 @Entity(tableName = "task_table")
-public class Task {
+public class Task  {
     @PrimaryKey(autoGenerate = true)
     private Long taskID;
     @NotNull
@@ -18,21 +18,26 @@ public class Task {
     private String name;
     @Nullable
     private String detail;
-    private String dueDate;
-    private String startDate;
+    private Long planningDueDate;
+    private Long planningStartDate;
     private int status; // 0: to do; 1: in progress; 2: completed
+
+    @Nullable
+    private Long actualStartDate;
+    @Nullable
+    private Long actualDueDate;
 
 //    public Task() {
 //    }
 
 
-    public Task(Long projectID, String name, String detail, String dueDate, String startDate, int status) {
+    public Task(Long projectID, String name, String detail, Long planningDueDate, Long planningStartDate, int status) {
         this.projectID = projectID;
         this.name = name;
         this.detail = detail;
-        this.dueDate = dueDate;
+        this.planningDueDate = planningDueDate;
         this.status = status;
-        this.startDate = startDate;
+        this.planningStartDate = planningStartDate;
     }
 
     public Long getTaskID() {
@@ -60,12 +65,12 @@ public class Task {
         this.detail = detail;
     }
 
-    public String getDueDate() {
-        return dueDate;
+    public Long getPlanningDueDate() {
+        return planningDueDate;
     }
 
-    public void setDueDate(String dueDate) {
-        this.dueDate = dueDate;
+    public void setPlanningDueDate(Long dueDate) {
+        this.planningDueDate = dueDate;
     }
 
     public int getStatus() {
@@ -76,12 +81,12 @@ public class Task {
         this.status = status;
     }
 
-    public String getStartDate() {
-        return startDate;
+    public Long getPlanningStartDate() {
+        return planningStartDate;
     }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
+    public void setPlanningStartDate(Long planningStartDate) {
+        this.planningStartDate = planningStartDate;
     }
 
     public Long getProjectID() {
@@ -90,5 +95,21 @@ public class Task {
 
     public void setProjectID(Long projectID) {
         this.projectID = projectID;
+    }
+
+    public Long getActualStartDate() {
+        return actualStartDate;
+    }
+
+    public void setActualStartDate( Long actualStartDate) {
+        this.actualStartDate = actualStartDate;
+    }
+
+    public Long getActualDueDate() {
+        return actualDueDate;
+    }
+
+    public void setActualDueDate( Long actualDueDate) {
+        this.actualDueDate = actualDueDate;
     }
 }

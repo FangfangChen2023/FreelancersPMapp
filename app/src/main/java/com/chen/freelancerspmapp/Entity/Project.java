@@ -16,18 +16,21 @@ public class Project {
     private String name;
     @Nullable
     private String details;
-    private String startDate;
-    private String dueDate;
-
+    private Long planningStartDate;
+    private Long planningDueDate;
     private int status; // 0: current; 1: history
+    @Nullable
+    private Long actualStartDate;
+    @Nullable
+    private Long actualDueDate;
 
 //    public Project() {
 //    }
 
-    public Project(String name, String details, String startDate, String dueDate, int status) {
+    public Project(String name, String details, Long planningStartDate, Long planningDueDate, int status) {
         this.name = name;
-        this.dueDate = dueDate;
-        this.startDate = startDate;
+        this.planningDueDate = planningDueDate;
+        this.planningStartDate = planningStartDate;
         this.status = status;
         this.details = details;
     }
@@ -40,20 +43,20 @@ public class Project {
         this.projectID = projectID;
     }
 
-    public String getStartDate() {
-        return startDate;
+    public Long getPlanningStartDate() {
+        return planningStartDate;
     }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
+    public void setPlanningStartDate(Long planningStartDate) {
+        this.planningStartDate = planningStartDate;
     }
 
-    public String getDueDate() {
-        return dueDate;
+    public Long getPlanningDueDate() {
+        return planningDueDate;
     }
 
-    public void setDueDate(String dueDate) {
-        this.dueDate = dueDate;
+    public void setPlanningDueDate(Long planningDueDate) {
+        this.planningDueDate = planningDueDate;
     }
 
     public String getName() {
@@ -81,4 +84,21 @@ public class Project {
         this.status = status;
     }
 
+    @Nullable
+    public Long getActualStartDate() {
+        return actualStartDate;
+    }
+
+    public void setActualStartDate(@Nullable Long actualStartDate) {
+        this.actualStartDate = actualStartDate;
+    }
+
+    @Nullable
+    public Long getActualDueDate() {
+        return actualDueDate;
+    }
+
+    public void setActualDueDate(@Nullable Long actualDueDate) {
+        this.actualDueDate = actualDueDate;
+    }
 }

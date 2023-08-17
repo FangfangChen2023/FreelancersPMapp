@@ -45,7 +45,7 @@ public class DoingRecyclerAdapter extends RecyclerView.Adapter<TaskRecyclerViewH
                 public void onClick(View v) {
                     PopupMenu moreActionsPopupMenu = new PopupMenu(v.getContext(), holder.itemDetails);
                     moreActionsPopupMenu.getMenuInflater().inflate(R.menu.more_actions, moreActionsPopupMenu.getMenu());
-                    moreActionsPopupMenu.getMenu().removeItem(0);
+                    moreActionsPopupMenu.getMenu().removeItem(R.id.state_changeto_doing);
 
                     if (buttonClickListener != null) {
                         buttonClickListener.onButtonClick(position, moreActionsPopupMenu);

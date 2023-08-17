@@ -53,7 +53,7 @@ public class TabViewPageAdapter extends FragmentStateAdapter {
         todoFragment = TodoFragment.newInstance(sharedViewModel);
         inprogressFragment = InprogressFragment.newInstance(sharedViewModel);
         completedFragment = CompletedFragment.newInstance(sharedViewModel);
-        workflowFragment = WorkflowFragment.newInstance();
+        workflowFragment = WorkflowFragment.newInstance(sharedViewModel);
 
         Log.d("createFragment is called", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 

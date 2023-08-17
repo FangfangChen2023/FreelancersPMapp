@@ -2,55 +2,106 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_workflow"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingVertical="5dp"
     tools:context=".HomeFragments.WorkflowFragment">
+
+    <TextView
+        android:id="@+id/point_date"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:text="24/8"
+        android:textColor="@color/blue_gray_700"
+        android:textSize="15sp" />
+
 
     <com.github.vipulasri.timelineview.TimelineView
         android:id="@+id/timeline"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:endLineColor="@color/design_default_color_primary"
+        android:layout_height="120dp"
+        app:endLineColor="@color/blue_gray_600"
         app:linePadding="5dp"
-        app:lineWidth="5dp"
-        app:markerSize="20dp"
-        app:startLineColor="@color/design_default_color_primary" />
+        app:lineWidth="2dp"
+        app:marker="@color/Aquamarine"
+        app:markerInCenter="false"
+        app:markerSize="10dp"
+        app:startLineColor="@color/blue_gray_600" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="15dp"
-        app:cardBackgroundColor="@color/design_default_color_secondary_variant"
-        app:contentPadding="15dp">
+        android:orientation="vertical"
+        >
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="5dp"
+            app:cardElevation="0dp"
+            app:cardCornerRadius="15dp"
+            >
+        <TextView
+            android:id="@+id/tips"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="match_parent"
+            android:background="@color/blue_gray_200"
             android:gravity="center"
-            android:orientation="vertical">
+            android:text="To Do"
+            android:textColor="@color/blue_gray_700"
+            android:textSize="14sp"
+            />
+        </com.google.android.material.card.MaterialCardView>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_timeline_date"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/detail_card"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="10dp"
+            app:contentPadding="13dp"
+            >
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@android:color/white"
-                tools:text="24 JAN" />
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_timeline_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="@android:color/white"
-                tools:text="Order Successfully Completed" />
+                    <TextView
+                        android:id="@+id/actual_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/blue_gray_700"
+                        android:textSize="10sp" />
 
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/planning_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/blue_gray_500"
+                    android:textSize="9sp"
+                    tools:text="" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_timeline_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/blue_gray_700"
+                    tools:text="Order Successfully Completed"
+                    android:textSize="13sp"
+                    />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 
 </LinearLayout>

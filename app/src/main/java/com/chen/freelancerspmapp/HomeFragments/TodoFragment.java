@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -59,7 +60,9 @@ public class TodoFragment extends Fragment {
     private SharedViewModel sharedViewModel;
     private TodoRecyclerAdapter todoRecyclerAdapter;
     private String selectedStartDate;
+    private Long startDateLong;
     private String selectedDueDate;
+    private Long dueDateLong;
     private String DatePattern = "MM-dd-yyyy";
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DatePattern);
     private MyViewModelFactory myViewModelFactory;
@@ -87,10 +90,10 @@ public class TodoFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_todo, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.todo_recyclerview);
-         dialogView = inflater.inflate(R.layout.dialog_new_project, container, false);
+        dialogView = inflater.inflate(R.layout.dialog_new_project, container, false);
 
 
-        if(sharedViewModel.getCurrentProj().getValue()!=null){
+        if (sharedViewModel.getCurrentProj().getValue() != null) {
             currentProjID = sharedViewModel.getCurrentProj().getValue().getProjectID();
         }
 
@@ -107,26 +110,29 @@ public class TodoFragment extends Fragment {
         // task operations button setting
         todoRecyclerAdapter.setOnMoreActionBtnClickListener((position, moreActionsPopupMenu) -> {
             moreActionsPopupMenu.setOnMenuItemClickListener(actionItem -> {
+                Date date = new Date();
                 switch (actionItem.getItemId()) {
                     case R.id.state_changeto_doing: {
                         // change the task state to doing
                         List<Task> temp = todoTaskList.getValue();
                         Task task = temp.remove(position);
                         task.setStatus(1);
+                        task.setActualStartDate(date.getTime());
                         taskViewModel.updateTask(task);
                         todoTaskList.setValue(temp);
                         return true;
                     }
 
-                    case R.id.state_changeto_done: {
-                        // change the task state to done
-                        List<Task> temp = todoTaskList.getValue();
-                        Task task = temp.remove(position);
-                        task.setStatus(2);
-                        taskViewModel.updateTask(task);
-                        todoTaskList.setValue(temp);
-                        return true;
-                    }
+//                    case R.id.state_changeto_done: {
+//                        // change the task state to done
+//                        List<Task> temp = todoTaskList.getValue();
+//                        Task task = temp.remove(position);
+//                        task.setStatus(2);
+//                        task.setActualDueDate(date.getTime());
+//                        taskViewModel.updateTask(task);
+//                        todoTaskList.setValue(temp);
+//                        return true;
+//                    }
 
                     case R.id.see_details: {
                         // TODO: the task details
@@ -157,7 +163,6 @@ public class TodoFragment extends Fragment {
             public void onChanged(List<Task> tasks) {
                 todoRecyclerAdapter.refreshTodoTaskList(tasks);
                 todoRecyclerAdapter.notifyDataSetChanged();
-//                recyclerView.setAdapter(todoRecyclerAdapter);
             }
         });
 
@@ -176,90 +181,33 @@ public class TodoFragment extends Fragment {
         newTaskDialog.setView(dialogView);
         alertDialog = newTaskDialog.create();
 
-        Button btnStartDatePicker = dialogView.findViewById(R.id.startDatePicker);
+        Button btnDatePicker = dialogView.findViewById(R.id.date_duration_picker);
         TextView taskStartDate = dialogView.findViewById(R.id.add_start_date);
-        btnStartDatePicker.setOnClickListener(new View.OnClickListener() {
+        TextView taskDueDate = dialogView.findViewById(R.id.add_due_date);
+        btnDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
+                MaterialDatePicker.Builder<Pair<Long, Long>> builder = MaterialDatePicker.Builder.dateRangePicker();
                 // Customize the date picker if needed (optional)
-                builder.setTitleText("Task Start Date");
+                builder.setTitleText("Task Start and Due Date");
                 // Create the date picker
-                final MaterialDatePicker<Long> datePicker = builder.build();
+                final MaterialDatePicker<Pair<Long, Long>> datePicker = builder.build();
                 // Set a listener to get the selected date
-                datePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
-                    @Override
-                    public void onPositiveButtonClick(Long selection) {
-                        // 'selection' is the selected timestamp in milliseconds
-                        Date selectedDate = new Date(selection);
-                        selectedStartDate = simpleDateFormat.format(selectedDate);
-                    }
+                datePicker.addOnPositiveButtonClickListener(selection -> {
+                    // 'selection' is the selected timestamp in milliseconds
+                    startDateLong = selection.first;
+                    dueDateLong = selection.second;
+                    selectedStartDate = simpleDateFormat.format(new Date(startDateLong));
+                    selectedDueDate = simpleDateFormat.format(new Date(dueDateLong));
                 });
                 datePicker.show(requireActivity().getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
 
-                datePicker.addOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        taskStartDate.setText(selectedStartDate);
-                    }
+                datePicker.addOnDismissListener(dialog -> {
+                    taskStartDate.setText(selectedStartDate);
+                    taskDueDate.setText(selectedDueDate);
                 });
             }
         });
-//        taskStartDate.getEditText().setOnClickListener(v -> {
-//            final Calendar c = Calendar.getInstance();
-//            int mYear = c.get(Calendar.YEAR); // current year
-//            int mMonth = c.get(Calendar.MONTH); // current month
-//            int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
-//            // date picker dialog
-//            datePickerDialogForStart = new DatePickerDialog(getContext(),
-//                    (view1, year, monthOfYear, dayOfMonth) -> {
-//                        // set day of month , month and year value in the edit text
-//                        taskStartDate.getEditText().setText(dayOfMonth + "/"
-//                                + (monthOfYear + 1) + "/" + year);
-//
-//                    }, mYear, mMonth, mDay);
-//            datePickerDialogForStart.show();
-//        });
-
-        Button btnDueDatePicker = dialogView.findViewById(R.id.dueDatePicker);
-        TextView taskDueDate = dialogView.findViewById(R.id.add_due_date);
-        btnDueDatePicker.setOnClickListener(v -> {
-            MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
-            // Customize the date picker if needed (optional)
-            builder.setTitleText("Task Due Date");
-            // Create the date picker
-            final MaterialDatePicker<Long> datePicker = builder.build();
-            // Set a listener to get the selected date
-            datePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
-                @Override
-                public void onPositiveButtonClick(Long selection) {
-                    Date selectedDate = new Date(selection);
-                    selectedDueDate = simpleDateFormat.format(selectedDate);
-                }
-            });
-            datePicker.show(requireActivity().getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
-            datePicker.addOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    taskDueDate.setText(selectedDueDate);
-                }
-            });
-        });
-//        taskDueDate.getEditText().setOnClickListener(v -> {
-//            final Calendar c = Calendar.getInstance();
-//            int mYear = c.get(Calendar.YEAR); // current year
-//            int mMonth = c.get(Calendar.MONTH); // current month
-//            int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
-//            // date picker dialog
-//            datePickerDialogForDue = new DatePickerDialog(getContext(),
-//                    (view12, year, monthOfYear, dayOfMonth) -> {
-//                        // set day of month , month and year value in the edit text
-//                        taskDueDate.getEditText().setText(dayOfMonth + "/"
-//                                + (monthOfYear + 1) + "/" + year);
-//
-//                    }, mYear, mMonth, mDay);
-//            datePickerDialogForDue.show();
-//        });
 
         newTaskDialog.setPositiveButton("Add", (dialog, which) -> {
             TextInputLayout editName = dialogView.findViewById(R.id.add_name);
@@ -281,8 +229,8 @@ public class TodoFragment extends Fragment {
                     myViewModelFactory.setProjectID(currentProjID);
                     taskViewModel = new ViewModelProvider(this, myViewModelFactory).get(TaskViewModel.class);
                 }
-                Log.d("current ID :%%%%%%%%%%%%%%%%", currentProjID.toString());
-                Task newTask = new Task(currentProjID, taskName, taskDetails, taskStartDate1, taskDueDate1, 0);
+//                Log.d("current ID :%%%%%%%%%%%%%%%%", currentProjID.toString());
+                Task newTask = new Task(currentProjID, taskName, taskDetails, startDateLong, dueDateLong, 0);
                 taskViewModel.insertTask(newTask);
 
                 // clear all texts

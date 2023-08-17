@@ -46,7 +46,7 @@ public class TodoRecyclerAdapter extends RecyclerView.Adapter<TaskRecyclerViewHo
                 public void onClick(View v) {
                     PopupMenu moreActionsPopupMenu = new PopupMenu(v.getContext(), holder.itemDetails);
                     moreActionsPopupMenu.getMenuInflater().inflate(R.menu.more_actions, moreActionsPopupMenu.getMenu());
-
+                    moreActionsPopupMenu.getMenu().removeItem(R.id.state_changeto_done);
                     if (buttonClickListener != null) {
                         buttonClickListener.onButtonClick(position, moreActionsPopupMenu);
                     }

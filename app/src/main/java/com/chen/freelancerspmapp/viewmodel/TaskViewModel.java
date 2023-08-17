@@ -15,14 +15,17 @@ import com.chen.freelancerspmapp.Repository.TaskRepositoryImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class TaskViewModel extends AndroidViewModel {
 
     private TaskRepositoryImpl taskRepository;
-    private LiveData<List<Task>> allTasks;
+    private  LiveData<List<Task>> allTasks = new MutableLiveData<>();
+    private static MutableLiveData<List<Task>> workflowTasks = new MutableLiveData<>();
     private MutableLiveData<List<Task>> todoTasks = new MutableLiveData<>();
-    private MutableLiveData<List<Task>> doingTasks = new MutableLiveData<>();
-    private MutableLiveData<List<Task>> doneTasks = new MutableLiveData<>();
+     private static MutableLiveData<List<Task>> doingTasks = new MutableLiveData<>();
+     private static MutableLiveData<List<Task>> doneTasks = new MutableLiveData<>();
+     private CustomComparator taskComparator = new CustomComparator();
 
     public TaskViewModel(@NonNull Application application, Long projectID) {
         super(application);
@@ -32,7 +35,6 @@ public class TaskViewModel extends AndroidViewModel {
     }
 
     public void initializeLists(Long projectID) {
-        Log.d("initializeLists", "@@@@@@@@@@@@@@@");
         try {
             getAllTasksFromDB(projectID).get();
         } catch (Exception e) {
@@ -52,30 +54,42 @@ public class TaskViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Task>> getAllTasks() {
-        return allTasks;
+        return workflowTasks;
     }
 
     public void categorizeTasks() {
         List<Task> todoTemp = new ArrayList<>();
         List<Task> doingTemp = new ArrayList<>();
         List<Task> doneTemp = new ArrayList<>();
-        if (allTasks != null && allTasks.getValue() != null && allTasks.getValue().size() > 0) {
+        if (allTasks.getValue() != null && allTasks.getValue().size() > 0) {
             allTasks.getValue().forEach((task) -> {
                 if (task.getStatus() == 0) {
                     todoTemp.add(task);
                 }
                 if (task.getStatus() == 1) {
                     doingTemp.add(task);
+
                 }
                 if (task.getStatus() == 2) {
                     doneTemp.add(task);
                 }
             });
         }
-
+        // Sorting tasks according to their start time, due time and actual start and finishing time
+        todoTemp.sort(taskComparator);
         todoTasks.setValue(todoTemp);
+
+        doingTemp.sort(taskComparator);
         doingTasks.setValue(doingTemp);
+
+        doneTemp.sort(taskComparator);
         doneTasks.setValue(doneTemp);
+
+        List<Task> allTasksTemp = new ArrayList<>();
+        allTasksTemp.addAll(doneTemp);
+        allTasksTemp.addAll(doingTemp);
+        allTasksTemp.addAll(todoTemp);
+        workflowTasks.setValue(allTasksTemp);
     }
 
     public LiveData<Task> getTask(Long taskID, Long projectID) {
@@ -130,4 +144,5 @@ public class TaskViewModel extends AndroidViewModel {
         }
         categorizeTasks();
     }
+
 }

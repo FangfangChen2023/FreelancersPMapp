@@ -13,10 +13,10 @@ import java.util.List;
 
 public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
 
-    List<Project> projectList;
+    List<Project> historyProjectList;
 
-    public HistoryRecyclerAdapter(List<Project> projectList) {
-        this.projectList = projectList;
+    public HistoryRecyclerAdapter(List<Project> historyProjectList) {
+        this.historyProjectList = historyProjectList;
     }
 
     @NonNull
@@ -27,12 +27,15 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryViewHold
 
     @Override
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
-        holder.projItemView.setText(projectList.get(position).getName());
-        holder.projectImg.setImageResource(R.drawable.baseline_check_circle_24);
+        if(historyProjectList.size()>0){
+            holder.projItemView.setText(historyProjectList.get(position).getName());
+            holder.projectImg.setImageResource(R.drawable.baseline_check_circle_24);
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return projectList.size();
+        return historyProjectList.size();
     }
 }

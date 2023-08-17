@@ -14,7 +14,7 @@ import com.chen.freelancerspmapp.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
-    private  SharedPreferences sharedPreferences;
+//    private  SharedPreferences sharedPreferences;
     private HomeFragment homeFragment;
     private HistoryFragment historyFragment;
     private SettingFragment settingFragment;
@@ -25,10 +25,10 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        sharedPreferences = getSharedPreferences("MY_DOC", Context.MODE_PRIVATE);
-        homeFragment = new HomeFragment(sharedPreferences);
-        historyFragment = new HistoryFragment(sharedPreferences);
-        settingFragment = new SettingFragment(sharedPreferences);
+//        sharedPreferences = getSharedPreferences("MY_DOC", Context.MODE_PRIVATE);
+        homeFragment =  HomeFragment.newInstance();
+        historyFragment =  HistoryFragment.newInstance();
+        settingFragment =  SettingFragment.newInstance();
 
         replaceFragment(homeFragment);
 

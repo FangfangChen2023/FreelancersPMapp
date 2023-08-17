@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
@@ -59,20 +60,22 @@ public class HomeFragment extends Fragment {
     private SharedViewModel sharedViewModel;
     private ProjectViewModel projectViewModel;
     private MyViewModelFactory myViewModelFactory;
-    private SharedPreferences sharedPreferences;
+//    private SharedPreferences sharedPreferences;
     private String selectedStartDate;
+    private Long startDateLong;
     private String selectedDueDate;
+    private Long dueDateLong;
     private String DatePattern = "MM-dd-yyyy";
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DatePattern);
-    public HomeFragment(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
+    public HomeFragment() {
+//        this.sharedPreferences = sharedPreferences;
     }
 
 
-//    public static HomeFragment newInstance() {
-//        HomeFragment fragment = new HomeFragment();
-//        return fragment;
-//    }
+    public static HomeFragment newInstance() {
+        HomeFragment fragment = new HomeFragment();
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,6 +101,9 @@ public class HomeFragment extends Fragment {
         btnNewProject = view.findViewById(R.id.new_project);
         tabLayout = view.findViewById(R.id.kanban_tab);
         viewPager2 = view.findViewById(R.id.view_pager2);
+
+        viewPager2.setSaveEnabled(false);
+
         btnChangeProj = view.findViewById(R.id.button_change_project);
         toolBar = view.findViewById(R.id.home_toolbar);
 
@@ -111,48 +117,32 @@ public class HomeFragment extends Fragment {
         newProjectDialog.setView(dialogView);
         alertDialog = newProjectDialog.create();
 
-        Button btnStartDatePicker = dialogView.findViewById(R.id.startDatePicker);
+        Button btnDatePicker = dialogView.findViewById(R.id.date_duration_picker);
         TextView projStartDate = dialogView.findViewById(R.id.add_start_date);
-        btnStartDatePicker.setOnClickListener(v -> {
-            MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
-            builder.setTitleText("Project Start Date");
-            final MaterialDatePicker<Long> datePicker = builder.build();
-            datePicker.addOnPositiveButtonClickListener(selection -> {
-                Date selectedDate = new Date(selection);
-                selectedStartDate = simpleDateFormat.format(selectedDate);
+        TextView projDueDate = dialogView.findViewById(R.id.add_due_date);
+        btnDatePicker.setOnClickListener(v -> {
+            MaterialDatePicker.Builder<Pair<Long, Long>> builder = MaterialDatePicker.Builder.dateRangePicker();
+            builder.setTitleText("Project Start and Due Date");
+             MaterialDatePicker<Pair<Long, Long>> dateRangePicker = builder.build();
+            dateRangePicker.addOnPositiveButtonClickListener(selection -> {
+                startDateLong = selection.first;
+                dueDateLong = selection.second;
+
+                selectedStartDate = simpleDateFormat.format(new Date(startDateLong));
+                selectedDueDate = simpleDateFormat.format(new Date(dueDateLong));
             });
-            datePicker.show(getActivity().getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
-            datePicker.addOnDismissListener(new DialogInterface.OnDismissListener() {
+            dateRangePicker.show(getActivity().getSupportFragmentManager(), "MATERIAL_DATE_RANGE_PICKER");
+            dateRangePicker.addOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
                     projStartDate.setText(selectedStartDate);
+                    projDueDate.setText(selectedDueDate);
                 }
             });
 
         });
 
-        Button btnDueDatePicker = dialogView.findViewById(R.id.dueDatePicker);
-        TextView projDueDate = dialogView.findViewById(R.id.add_due_date);
-        btnDueDatePicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
-                builder.setTitleText("Project Due Date");
-                final MaterialDatePicker<Long> datePicker = builder.build();
-                datePicker.addOnPositiveButtonClickListener(selection -> {
-                    Date selectedDate = new Date(selection);
-                    selectedDueDate = simpleDateFormat.format(selectedDate);
-                });
-                datePicker.show(getActivity().getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
-                datePicker.addOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        projDueDate.setText(selectedDueDate);
-                    }
-                });
 
-            }
-        });
 
         newProjectDialog.setPositiveButton("Add", (dialog, which) -> {
             TextInputLayout editName = dialogView.findViewById(R.id.add_name);
@@ -167,7 +157,7 @@ public class HomeFragment extends Fragment {
             String projDueDate1 = projDueDate.getText().toString();
 
             if (!projName.trim().isEmpty() && !projStartDate1.trim().isEmpty() && !projDueDate1.trim().isEmpty()) {
-                Project newProj = new Project(projName, projDetails, projStartDate1, projDueDate1, 0);
+                Project newProj = new Project(projName, projDetails, startDateLong, dueDateLong, 0);
                 projectViewModel.insertProject(newProj);
 
                 projectsMenu.setValue(projectViewModel.getCurrentProjects().getValue());
@@ -177,7 +167,8 @@ public class HomeFragment extends Fragment {
                 Log.d("getting current ID from home fragment()()()()()()()()()()()()()()", sharedViewModel.getCurrentProj().getValue().getProjectID().toString());
 
                 toolBar.setTitle(currentProj.getName());
-                toolBar.setSubtitle(currentProj.getStartDate() + " - " + currentProj.getDueDate());
+
+                toolBar.setSubtitle(simpleDateFormat.format(new Date(currentProj.getPlanningStartDate())) + " - " + simpleDateFormat.format(new Date(currentProj.getPlanningDueDate())));
 
                 if (emptyPage.getVisibility() == View.VISIBLE) {
                     emptyPage.setVisibility(View.INVISIBLE);
@@ -246,7 +237,7 @@ public class HomeFragment extends Fragment {
                             currentProj = project;
 
                             toolBar.setTitle(currentProj.getName());
-                            toolBar.setSubtitle(currentProj.getStartDate() + " - " + currentProj.getDueDate());
+                            toolBar.setSubtitle(simpleDateFormat.format(new Date(currentProj.getPlanningStartDate())) + " - " + simpleDateFormat.format(new Date(currentProj.getPlanningDueDate())));
                             projectsPopupMenu.getMenu().removeItem(item.getItemId());
 
                             sharedViewModel.setCurrentProj(currentProj);
@@ -265,8 +256,6 @@ public class HomeFragment extends Fragment {
         sharedViewModel.getCurrentProj().observe(getViewLifecycleOwner(), new Observer<Project>() {
             @Override
             public void onChanged(Project project) {
-                Log.d("sharedViewModel CurrentProj is changed to",">>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                Log.d(sharedViewModel.getCurrentProj().getValue().getProjectID()+" : ", sharedViewModel.getCurrentProj().getValue().getName());
                 tabViewPageAdapter.reloadFragments();
             }
         });
@@ -308,7 +297,7 @@ public class HomeFragment extends Fragment {
                 currentProj = projectsMenu.getValue().get(projectsMenu.getValue().size() - 1);
             }
             toolBar.setTitle(currentProj.getName());
-            toolBar.setSubtitle(currentProj.getStartDate() + " - " + currentProj.getDueDate());
+            toolBar.setSubtitle(simpleDateFormat.format(new Date(currentProj.getPlanningStartDate())) + " - " + simpleDateFormat.format(new Date(currentProj.getPlanningDueDate())));
 
             projNotEmpty.setVisibility(View.VISIBLE);
             btnNewProject.setVisibility(View.VISIBLE);
@@ -317,9 +306,9 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        viewPager2.setAdapter(null);
-    }
+//    @Override
+//    public void onDestroyView() {
+//        super.onDestroyView();
+//        viewPager2.setAdapter(null);
+//    }
 }

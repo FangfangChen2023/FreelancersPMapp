@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +71,13 @@ public class CompletedFragment extends Fragment {
 
         completedTaskList.setValue(taskViewModel.getDoneTasks().getValue());
 
+        taskViewModel.getDoneTasks().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
+            @Override
+            public void onChanged(List<Task> tasks) {
+                completedTaskList.setValue(taskViewModel.getDoneTasks().getValue());
+            }
+        });
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         completedRecyclerAdapter = new CompletedRecyclerAdapter(completedTaskList.getValue());
 
@@ -98,15 +106,14 @@ public class CompletedFragment extends Fragment {
             moreActionsPopupMenu.show();
         });
 
+        recyclerView.setAdapter(completedRecyclerAdapter);
         completedTaskList.observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
             @Override
             public void onChanged(List<Task> tasks) {
-                completedRecyclerAdapter.refreshDoingTaskList(tasks);
+                completedRecyclerAdapter.refreshDoneTaskList(tasks);
                 completedRecyclerAdapter.notifyDataSetChanged();
             }
         });
-
-        recyclerView.setAdapter(completedRecyclerAdapter);
 
         return view;
     }

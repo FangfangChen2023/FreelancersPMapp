@@ -21,20 +21,15 @@ public class SettingFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private SharedPreferences sharedPreferences;
-    public SettingFragment(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
+    public SettingFragment() {
+//        this.sharedPreferences = sharedPreferences;
     }
 
 
-//    public static SettingFragment newInstance(String param1, String param2) {
-//        SettingFragment fragment = new SettingFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
+    public static SettingFragment newInstance() {
+        SettingFragment fragment = new SettingFragment();
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
