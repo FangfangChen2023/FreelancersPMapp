@@ -25,6 +25,6 @@ public class CustomComparator implements Comparator<Task> {
 //            day1 = TimeUnit.MILLISECONDS.toDays(task1.getActualDueDate());
 //            day2 = TimeUnit.MILLISECONDS.toDays(task2.getActualDueDate());
 //        }
-        return Integer.compare(Math.round(day2), Math.round(day1));
+        return Integer.compare(Math.round(day1), Math.round(day2));
     }
 }

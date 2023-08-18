@@ -7,10 +7,12 @@ import androidx.room.PrimaryKey;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Entity(tableName = "task_table")
-public class Task  {
+public class Task {
     @PrimaryKey(autoGenerate = true)
     private Long taskID;
     @NotNull
@@ -31,7 +33,7 @@ public class Task  {
 //    }
 
 
-    public Task(Long projectID, String name, String detail, Long planningDueDate, Long planningStartDate, int status) {
+    public Task(Long projectID, String name, String detail, Long planningStartDate, Long planningDueDate, int status) {
         this.projectID = projectID;
         this.name = name;
         this.detail = detail;
@@ -101,7 +103,7 @@ public class Task  {
         return actualStartDate;
     }
 
-    public void setActualStartDate( Long actualStartDate) {
+    public void setActualStartDate(Long actualStartDate) {
         this.actualStartDate = actualStartDate;
     }
 
@@ -109,7 +111,29 @@ public class Task  {
         return actualDueDate;
     }
 
-    public void setActualDueDate( Long actualDueDate) {
+    public void setActualDueDate(Long actualDueDate) {
         this.actualDueDate = actualDueDate;
+    }
+
+    public String getPlanningDateToString() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String startDate = simpleDateFormat.format(new Date(planningStartDate));
+        String dueDate = simpleDateFormat.format(new Date(planningDueDate));
+
+        long days = TimeUnit.MILLISECONDS.toDays(planningDueDate - planningStartDate);
+        String planningDuration = "  (" + days + " days)";
+
+        return "Planning Date:  " + startDate + " - " + dueDate + planningDuration;
+    }
+
+    public String getActualDateToString() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String startDate = simpleDateFormat.format(new Date(actualStartDate));
+        String dueDate = simpleDateFormat.format(new Date(actualDueDate));
+
+        long days = TimeUnit.MILLISECONDS.toDays(actualDueDate - actualStartDate);
+        String actualDuration = "  (" + days + " days)";
+
+        return "Actual Date:    " + startDate + " - " + dueDate + actualDuration;
     }
 }

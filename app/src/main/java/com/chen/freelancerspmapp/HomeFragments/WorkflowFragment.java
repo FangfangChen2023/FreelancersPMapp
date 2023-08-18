@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.chen.freelancerspmapp.Entity.BusyTime;
 import com.chen.freelancerspmapp.Entity.FreeTimeCard;
 import com.chen.freelancerspmapp.Entity.WorkflowCard;
 import com.chen.freelancerspmapp.R;
@@ -83,18 +84,18 @@ public class WorkflowFragment extends Fragment {
             }
         });
 
+        List<BusyTime> busydoing = taskViewModel.getBusyInDoing();
+        List<BusyTime> busydone = taskViewModel.getBusyInDone();
+        List<BusyTime> busytodo = taskViewModel.getBusyInTodo();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        timeLineAdapter = new TimeLineAdapter(workflowList);
+        timeLineAdapter = new TimeLineAdapter(workflowList, busytodo, busydoing, busydone);
         recyclerView.setAdapter(timeLineAdapter);
 
-        allTaskList.observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
-            @Override
-            public void onChanged(List<Task> tasks) {
-                addFreeTimeCard(tasks);
-                timeLineAdapter.refreshTaskList(workflowList);
-                timeLineAdapter.notifyDataSetChanged();
-            }
+        allTaskList.observe(getViewLifecycleOwner(), tasks -> {
+            addFreeTimeCard(tasks);
+            timeLineAdapter.refreshTaskList(workflowList, taskViewModel.getBusyInTodo(), taskViewModel.getBusyInDoing(), taskViewModel.getBusyInDone());
+            timeLineAdapter.notifyDataSetChanged();
         });
 
         return recyclerView;
@@ -109,15 +110,13 @@ public class WorkflowFragment extends Fragment {
         workflowList = new ArrayList<>();
 
         for (int i = 1; i <= taskList.size(); i++) {
-
             WorkflowCard workflowCard = new WorkflowCard();
             workflowCard.setTask(taskList.get(i - 1));
             workflowList.add(workflowCard);
-
             if (i == taskList.size()) {
                 break;
             }
-
+//  check free time
             lastDue = taskList.get(i - 1).getPlanningDueDate();
             thisStart = taskList.get(i).getPlanningStartDate();
             if (taskList.get(i - 1).getActualDueDate() != null) {
@@ -128,12 +127,16 @@ public class WorkflowFragment extends Fragment {
             }
             freeDays = (int) TimeUnit.MILLISECONDS.toDays(thisStart - lastDue);
             if (freeDays > 1) {
-                String freeTimeText = "";
+                String freeTimeText = " ";
                 FreeTimeCard freeTimeCard = new FreeTimeCard();
                 freeTimeCard.setFreeDays(freeDays);
 
                 long lastFree = TimeUnit.MILLISECONDS.toDays(lastDue)+1;
                 long thisFree = TimeUnit.MILLISECONDS.toDays(thisStart)-1;
+
+                freeTimeCard.setFreeStart(TimeUnit.DAYS.toMillis(lastFree));
+                freeTimeCard.setFreeEnd(TimeUnit.DAYS.toMillis(thisFree));
+
                 String lastFreeText = simpleDateFormat.format(new Date(TimeUnit.DAYS.toMillis(lastFree))).substring(0, 5);
                 String thisFreeText = simpleDateFormat.format(new Date(TimeUnit.DAYS.toMillis(thisFree))).substring(0, 5);
 
@@ -148,7 +151,6 @@ public class WorkflowFragment extends Fragment {
                 card.setFreeTimeCard(freeTimeCard);
                 workflowList.add(card);
             }
-
 
         }
     }

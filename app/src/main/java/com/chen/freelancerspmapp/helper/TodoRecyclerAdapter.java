@@ -1,6 +1,7 @@
 package com.chen.freelancerspmapp.helper;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,8 @@ public class TodoRecyclerAdapter extends RecyclerView.Adapter<TaskRecyclerViewHo
         if(todoList != null &&  todoList.size() >0){
             holder.itemName.setText(todoList.get(position).getName());
             holder.imageView.setImageResource(R.drawable.baseline_access_time_24);
+            holder.planningDate.setText(todoList.get(position).getPlanningDateToString());
+            holder.planningDate.setTextColor(Color.parseColor("#344955"));
             holder.itemDetails.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

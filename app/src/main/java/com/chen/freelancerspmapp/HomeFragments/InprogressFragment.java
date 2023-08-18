@@ -13,11 +13,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.chen.freelancerspmapp.Entity.BusyTime;
 import com.chen.freelancerspmapp.Entity.Project;
 import com.chen.freelancerspmapp.R;
 import com.chen.freelancerspmapp.helper.DoingRecyclerAdapter;
-import com.chen.freelancerspmapp.helper.InprogressRecyclerAdapter;
 import com.chen.freelancerspmapp.Entity.Task;
 import com.chen.freelancerspmapp.viewmodel.MyViewModelFactory;
 import com.chen.freelancerspmapp.viewmodel.ProjectViewModel;
@@ -27,6 +28,7 @@ import com.chen.freelancerspmapp.viewmodel.TaskViewModel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class InprogressFragment extends Fragment {
 
@@ -127,6 +129,13 @@ public class InprogressFragment extends Fragment {
             }
         });
 
+       List<BusyTime> busyDoing = taskViewModel.getBusyInDoing();
+       busyDoing.forEach(busyTime -> {
+           String startDate = busyTime.getDurationStartString().substring(0,6);
+           String endDate = busyTime.getDurationDueString().substring(0,6);
+           String toastText = "You are busy between " + startDate + " and " + endDate;
+           Toast.makeText(requireActivity().getApplication(),toastText,Toast.LENGTH_SHORT).show();
+       });
 
         return view;
     }

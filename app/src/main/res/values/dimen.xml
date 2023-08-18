@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="text_view_height_2">50dp</dimen>
     <dimen name="text_view_height_3_4">50dp</dimen>
     <dimen name="text_view_height_5_6_7">70dp</dimen>
     <dimen name="text_view_height_8">90dp</dimen>
 
-    <dimen name="timeline_height">150dp</dimen>
-    <dimen name="timeline_height_long">170dp</dimen>
+    <dimen name="timeline_height_short">50dp</dimen>
+    <dimen name="timeline_height">80dp</dimen>
+    <dimen name="timeline_height_long">100dp</dimen>
 
     <dimen name="stroke_width">1dp</dimen>
 </resources>

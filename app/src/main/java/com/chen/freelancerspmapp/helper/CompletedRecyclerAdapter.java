@@ -17,7 +17,7 @@ import com.chen.freelancerspmapp.viewmodel.OnMoreActionButtonClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompletedRecyclerAdapter extends RecyclerView.Adapter<CompletedViewHolder> {
+public class CompletedRecyclerAdapter extends RecyclerView.Adapter<TaskRecyclerViewHolder> {
     private List<Task> completedTaskList = new ArrayList<>();
     private OnMoreActionButtonClickListener buttonClickListener;
 
@@ -31,15 +31,18 @@ public class CompletedRecyclerAdapter extends RecyclerView.Adapter<CompletedView
 
     @NonNull
     @Override
-    public CompletedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new CompletedViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view, parent, false));
+    public TaskRecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new TaskRecyclerViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CompletedViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull TaskRecyclerViewHolder holder, @SuppressLint("RecyclerView") int position) {
         if (completedTaskList != null && completedTaskList.size() > 0) {
-            holder.completedItemView.setText(completedTaskList.get(position).getName());
-            holder.completedImage.setImageResource(R.drawable.baseline_check_circle_24);
+            holder.itemName.setText(completedTaskList.get(position).getName());
+            holder.imageView.setImageResource(R.drawable.baseline_check_circle_24);
+            holder.planningDate.setText(completedTaskList.get(position).getPlanningDateToString());
+            holder.actualDate.setVisibility(View.VISIBLE);
+            holder.actualDate.setText(completedTaskList.get(position).getActualDateToString());
             holder.itemDetails.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -58,11 +61,13 @@ public class CompletedRecyclerAdapter extends RecyclerView.Adapter<CompletedView
 
     @Override
     public int getItemCount() {
-        return completedTaskList.size();
+        if(completedTaskList != null && completedTaskList.size() > 0){
+            return completedTaskList.size();
+        }
+        return 0;
     }
 
     public void refreshDoneTaskList(List<Task> taskList) {
-        Log.d("Refreshing", "----------------------------------------------------------------");
         completedTaskList.clear();
         completedTaskList = new ArrayList<>(taskList);
     }

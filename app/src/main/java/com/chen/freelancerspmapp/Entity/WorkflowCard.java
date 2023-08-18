@@ -3,6 +3,7 @@ package com.chen.freelancerspmapp.Entity;
 public class WorkflowCard {
     private Task task;
     private FreeTimeCard freeTimeCard;
+    private BusyTime busyTime;
 
     public WorkflowCard() {
     }
@@ -21,5 +22,13 @@ public class WorkflowCard {
 
     public void setFreeTimeCard(FreeTimeCard freeTimeCard) {
         this.freeTimeCard = freeTimeCard;
+    }
+
+    public BusyTime getBusyTime() {
+        return busyTime;
+    }
+
+    public void setBusyTime(BusyTime busyTime) {
+        this.busyTime = busyTime;
     }
 }

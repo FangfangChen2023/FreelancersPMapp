@@ -14,12 +14,15 @@ import com.chen.freelancerspmapp.Entity.Task;
 import com.chen.freelancerspmapp.R;
 import com.chen.freelancerspmapp.viewmodel.OnMoreActionButtonClickListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DoingRecyclerAdapter extends RecyclerView.Adapter<TaskRecyclerViewHolder>{
     private List<Task> doingTaskList;
     private OnMoreActionButtonClickListener buttonClickListener;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     public DoingRecyclerAdapter(List<Task> doingTaskList) {
         this.doingTaskList = new ArrayList<>(doingTaskList);
@@ -40,6 +43,10 @@ public class DoingRecyclerAdapter extends RecyclerView.Adapter<TaskRecyclerViewH
         if(doingTaskList != null && doingTaskList.size() != 0){
             holder.itemName.setText(doingTaskList.get(position).getName());
             holder.imageView.setImageResource(R.drawable.baseline_access_time_24);
+            holder.planningDate.setText(doingTaskList.get(position).getPlanningDateToString());
+            String startDate = simpleDateFormat.format(new Date(doingTaskList.get(position).getActualStartDate()));
+            holder.actualDate.setVisibility(View.VISIBLE);
+            holder.actualDate.setText("Actual start Date:   "+startDate);
             holder.itemDetails.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
