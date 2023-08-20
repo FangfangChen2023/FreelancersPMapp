@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Entity(tableName = "busytime_table")
+//@Entity(tableName = "busytime_table")
 public class BusyTime {
-    @PrimaryKey(autoGenerate = true)
+//    @PrimaryKey(autoGenerate = true)
     private long busyTimeID;
     private long durationStart;
     private long durationEnd;

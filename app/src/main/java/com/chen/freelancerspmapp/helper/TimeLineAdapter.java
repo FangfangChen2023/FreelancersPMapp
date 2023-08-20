@@ -62,9 +62,6 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull TimeLineViewHolder holder, int position) {
         // Time line will show the workflow with actual start and finishing time
-//        String planningDate = "";
-//        String actualDate = "";
-//        String actualDuration = "";
         String timelinePoint = "";
         String freeTimeText = "";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -75,7 +72,6 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
                 Task task = workflowLists.get(position).getTask();
                 holder.itemTitle.setText(task.getName());
                 String planningStartDate = simpleDateFormat.format(new Date(task.getPlanningStartDate()));
-                String planningDueDate = simpleDateFormat.format(new Date(task.getPlanningDueDate()));
 
                 // It's a to-do task
                 if (task.getStatus() == 0) {
@@ -83,54 +79,73 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
                     holder.materialCardView.setStrokeWidth(context.getResources().getDimensionPixelSize(R.dimen.stroke_width));
                     holder.materialCardView.setStrokeColor(Color.parseColor("#78909C"));
                     holder.taskType.setText("To Do");
-//                    holder.actualDate.setVisibility(View.GONE);
-                    // Planning date setting
-//                    planningDate = planningStartDate + " - " + planningDueDate;
                     timelinePoint = planningStartDate;
 
-                    long days = TimeUnit.MILLISECONDS.toDays(task.getPlanningDueDate() - task.getPlanningStartDate());
-//                    actualDuration = "  (" + days + " days)";
+                   if( busyTodo.size()>0){
+                       busyTodo.forEach(busyTime -> {
+                           for (Long relatedTask : busyTime.getRelatedTasks()) {
+                               if (relatedTask == task.getTaskID()) {
+                                   if (task.getPlanningStartDate() >= busyTime.getDurationStart()) {
+                                       holder.busyText.setText("You'll be busy between "+ busyTime.getDurationStartString()+" and " + busyTime.getDurationDueString());
+                                       holder.busyCard.setVisibility(View.VISIBLE);
+                                   }
+
+                               }
+                           }
+                       });
+                   }
                 }
                 // It's an in-progress task
                 if (task.getStatus() == 1) {
-//                    holder.tips.setText("In Progress");
-//                    holder.tips.setTextColor(Color.parseColor("#4A6572"));
-//                    holder.tips.setBackgroundColor(Color.parseColor("#F9AA33"));
-                    holder.materialCardView.setCardBackgroundColor(Color.parseColor("#F9AA33"));
+                    holder.materialCardView.setCardBackgroundColor(Color.parseColor("#30A0E0"));
                     holder.taskType.setText("In Progress");
+                    holder.taskType.setTextColor(Color.parseColor("#FFE3B3"));
+                    holder.itemTitle.setTextColor(Color.parseColor("#FFE3B3"));
+                    holder.materialCardView.setStrokeWidth(0);
                     String actualStartDate = simpleDateFormat.format(new Date(task.getActualStartDate()));
-//                    actualDate = actualStartDate + " - ?";
-                    long days = TimeUnit.MILLISECONDS.toDays(task.getPlanningDueDate() - task.getActualStartDate());
-//                    actualDuration = "  (" + days + " days)";
-//                    planningDate = planningStartDate + " - " + planningDueDate;
                     timelinePoint = actualStartDate;
+
+                    if( busyDoing.size()>0){
+                        busyDoing.forEach(busyTime -> {
+                            for (Long relatedTask : busyTime.getRelatedTasks()) {
+                                if (relatedTask == task.getTaskID()) {
+                                    if (task.getActualStartDate() > busyTime.getDurationStart()) {
+                                        holder.busyText.setText(String.format("You're busy between %s and %s", busyTime.getDurationStartString(), busyTime.getDurationDueString()));
+                                        holder.busyCard.setVisibility(View.VISIBLE);
+                                    }
+
+                                }
+                            }
+                        });
+                    }
+
                 }
                 // It's a finished task
                 if (task.getStatus() == 2) {
-                    holder.materialCardView.setCardBackgroundColor(Color.parseColor("#4A6572"));
+                    holder.materialCardView.setCardBackgroundColor(Color.parseColor("#97DBAE"));
                     holder.taskType.setText("Completed");
-                    holder.taskType.setTextColor(Color.parseColor("#F9AA33"));
-//                    holder.tips.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4A6572")));
-//                    holder.tips.setText("Done");
-//                    holder.tips.setTextColor(Color.parseColor("#F9AA33"));
-//                    holder.itemDate.setTextColor(Color.parseColor("#F9AA33"));
-//                    holder.actualDate.setTextColor(Color.parseColor("#F9AA33"));
-                    holder.itemTitle.setTextColor(Color.parseColor("#F9AA33"));
+                    holder.taskType.setTextColor(Color.parseColor("#006BBB"));
+                    holder.itemTitle.setTextColor(Color.parseColor("#006BBB"));
+                    holder.materialCardView.setStrokeWidth(0);
 
                     String actualStartDate = simpleDateFormat.format(new Date(task.getActualStartDate()));
-                    String actualDueDate = simpleDateFormat.format(new Date(task.getActualDueDate()));
-//                    actualDate = actualStartDate + " - " + actualDueDate;
-
-//                    planningDate = planningStartDate + " - " + planningDueDate;
-
-                    // Actual spending time
-                    long days = TimeUnit.MILLISECONDS.toDays(task.getActualDueDate() - task.getActualStartDate());
-//                    actualDuration = "  (" + days + " days)";
-
                     timelinePoint = actualStartDate;
+
+                    if( busyDone.size()>0){
+                        busyDone.forEach(busyTime -> {
+                            for (Long relatedTask : busyTime.getRelatedTasks()) {
+                                if (relatedTask == task.getTaskID()) {
+                                    if (task.getActualStartDate() > busyTime.getDurationStart()) {
+                                        holder.busyText.setText(String.format("You were busy between %s and %s", busyTime.getDurationStartString(), busyTime.getDurationDueString()));
+                                        holder.busyCard.setVisibility(View.VISIBLE);
+                                    }
+
+                                }
+                            }
+                        });
+                    }
+
                 }
-//                holder.itemDate.setText("Planning time: \n" + planningDate);
-//                holder.actualDate.setText("Actual working time: \n" + actualDate + actualDuration);
                 holder.pointDate.setText(timelinePoint.substring(0, timelinePoint.length() - 5));
             }
 
@@ -161,8 +176,6 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
                     freeTimeParams.height = context.getResources().getDimensionPixelSize(R.dimen.text_view_height_8);
                     holder.timelineLayout.height = context.getResources().getDimensionPixelSize(R.dimen.timeline_height_long);
                 }
-//                holder.tips.setVisibility(View.GONE);
-//                holder.itemDate.setVisibility(View.GONE);
                 timelinePoint = freeTimeCard.getFreeStartToString();
                 holder.pointDate.setText(timelinePoint.substring(0, timelinePoint.length() - 5));
                 holder.taskType.setVisibility(View.GONE);
@@ -189,6 +202,9 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
     public void refreshTaskList(List<WorkflowCard> cardList, List<BusyTime> busytodo, List<BusyTime> busydoing, List<BusyTime> busydone){
         workflowLists.clear();
         workflowLists = new ArrayList<>(cardList);
+        busyTodo = new ArrayList<>(busytodo);
+        busyDoing = new ArrayList<>(busydoing);
+        busyDone = new ArrayList<>(busydone);
     }
 
 }

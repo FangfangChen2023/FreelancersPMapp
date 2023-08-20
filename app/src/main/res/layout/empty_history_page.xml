@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:outlineProvider="none"
         android:text="No history project yet"
-        android:textColor="@color/blue_gray_400"
+        android:textColor="@color/blue_gray_200"
         android:textSize="30dp" />
 
     <TextView

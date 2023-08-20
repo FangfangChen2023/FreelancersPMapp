@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">FreelancersPMapp</string>
+    <string name="app_name">Freework</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="home_fragment">Home fragment</string>
     <string name="history_fragment">History fragment</string>
-    <string name="setting_fragment">Setting fragment</string>
+    <string name="setting_fragment">Coming soon!</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">Coming soon!</string>
 </resources>

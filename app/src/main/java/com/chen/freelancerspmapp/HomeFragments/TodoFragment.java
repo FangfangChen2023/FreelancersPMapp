@@ -1,18 +1,13 @@
 package com.chen.freelancerspmapp.HomeFragments;
 
-import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,36 +16,30 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chen.freelancerspmapp.Entity.BusyTime;
-import com.chen.freelancerspmapp.Entity.Project;
 import com.chen.freelancerspmapp.R;
 import com.chen.freelancerspmapp.helper.TodoRecyclerAdapter;
 import com.chen.freelancerspmapp.Entity.Task;
 import com.chen.freelancerspmapp.viewmodel.MyViewModelFactory;
-import com.chen.freelancerspmapp.viewmodel.OnMoreActionButtonClickListener;
-import com.chen.freelancerspmapp.viewmodel.ProjectViewModel;
 import com.chen.freelancerspmapp.viewmodel.SharedViewModel;
 import com.chen.freelancerspmapp.viewmodel.TaskViewModel;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-
-import org.apache.commons.lang3.Range;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TodoFragment extends Fragment {
 
@@ -58,8 +47,6 @@ public class TodoFragment extends Fragment {
     private TaskViewModel taskViewModel;
     private Long currentProjID;
 
-    private DatePickerDialog datePickerDialogForStart;
-    private DatePickerDialog datePickerDialogForDue;
     private SharedViewModel sharedViewModel;
     private TodoRecyclerAdapter todoRecyclerAdapter;
     private String selectedStartDate;
@@ -69,6 +56,9 @@ public class TodoFragment extends Fragment {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
     private MyViewModelFactory myViewModelFactory;
     private View dialogView;
+    private View taskDetailView;
+    private DialogInterface.OnClickListener busyAction = null;
+    private DialogInterface.OnClickListener notBusyAction = null;
 
     public TodoFragment(SharedViewModel sharedViewModel) {
         // the SharedViewModel is passed from the TabViewPageAdapter to make sure it's the same instance
@@ -93,7 +83,19 @@ public class TodoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_todo, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.todo_recyclerview);
         dialogView = inflater.inflate(R.layout.dialog_new_project, container, false);
+        taskDetailView = inflater.inflate(R.layout.detail_dialog, container, false);
 
+        AlertDialog taskDetailDialog;
+        AlertDialog.Builder detailDialogBuilder = new AlertDialog.Builder(getContext());
+        detailDialogBuilder.setCancelable(true);
+        detailDialogBuilder.setView(taskDetailView);
+        detailDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        taskDetailDialog = detailDialogBuilder.create();
 
         if (sharedViewModel.getCurrentProj().getValue() != null) {
             currentProjID = sharedViewModel.getCurrentProj().getValue().getProjectID();
@@ -137,7 +139,23 @@ public class TodoFragment extends Fragment {
 //                    }
 
                     case R.id.see_details: {
-                        // TODO: the task details
+                        List<Task> temp = todoTaskList.getValue();
+                        Task task = temp.get(position);
+                        EditText title = taskDetailView.findViewById(R.id.task_name);
+                        title.setText(task.getName());
+                        TextView proj = taskDetailView.findViewById(R.id.belongs_to);
+                        proj.setText(sharedViewModel.getCurrentProj().getValue().getName());
+                        TextView planning = taskDetailView.findViewById(R.id.planning);
+                        planning.setText(task.getPlanningDateToString());
+                        TextInputEditText detail = taskDetailView.findViewById(R.id.description);
+                        detail.setText(task.getDetail());
+
+                        TextView realText = taskDetailView.findViewById(R.id.actual_text);
+                        realText.setVisibility(View.GONE);
+                        TextView real = taskDetailView.findViewById(R.id.real);
+                        real.setVisibility(View.GONE);
+
+                        taskDetailDialog.show();
                         return true;
                     }
 
@@ -183,11 +201,6 @@ public class TodoFragment extends Fragment {
         newTaskDialog.setView(dialogView);
         alertDialog = newTaskDialog.create();
 
-        //-----------------------AlertDialog for busytime--------------------------------------------------------//
-        AlertDialog.Builder busyDialogBuilder = new AlertDialog.Builder(getActivity());
-        busyDialogBuilder.setMessage("You've already had work during this time. Are you sure adding more?")
-                .setTitle("Busy Time Alert!");
-        AlertDialog busyDialog = busyDialogBuilder.create();
 
         Button btnDatePicker = dialogView.findViewById(R.id.date_duration_picker);
         TextView taskStartDate = dialogView.findViewById(R.id.add_start_date);
@@ -198,6 +211,7 @@ public class TodoFragment extends Fragment {
                 MaterialDatePicker.Builder<Pair<Long, Long>> builder = MaterialDatePicker.Builder.dateRangePicker();
                 // Customize the date picker if needed (optional)
                 builder.setTitleText("Task Start and Due Date");
+                builder.setTheme(R.style.ThemeOverlay_App_MaterialCalendar);
                 // Create the date picker
                 final MaterialDatePicker<Pair<Long, Long>> datePicker = builder.build();
                 // Set a listener to get the selected date
@@ -218,6 +232,7 @@ public class TodoFragment extends Fragment {
         });
 
         newTaskDialog.setPositiveButton("Add", (dialog, which) -> {
+            AtomicBoolean isBusy = new AtomicBoolean(true);
             TextInputLayout editName = dialogView.findViewById(R.id.add_name);
             editName.setHint("Task Name");
             String taskName = editName.getEditText().getText().toString();
@@ -240,37 +255,42 @@ public class TodoFragment extends Fragment {
                 Task newTask = new Task(currentProjID, taskName, taskDetails, startDateLong, dueDateLong, 0);
                 List<BusyTime> busyTodo = taskViewModel.getBusyInTodo();
                 List<BusyTime> busyDoing = taskViewModel.getBusyInDoing();
-                boolean isBusy = false;
-                for(int i=0; i<busyTodo.size(); i++){
-                    isBusy = busyTodo.get(i).isOverlappedBy(startDateLong, dueDateLong);
+
+                for (int i = 0; i < busyTodo.size(); i++) {
+                    isBusy.set(busyTodo.get(i).isOverlappedBy(startDateLong, dueDateLong));
                 }
-                for(int i=0; i<busyDoing.size(); i++){
-                    isBusy = busyDoing.get(i).isOverlappedBy(startDateLong, dueDateLong);
+                for (int i = 0; i < busyDoing.size(); i++) {
+                    isBusy.set(busyDoing.get(i).isOverlappedBy(startDateLong, dueDateLong));
                 }
-                if(isBusy){
+                if (isBusy.get()) {
                     // TODO dialog
+                    //-----------------------AlertDialog for busytime--------------------------------------------------------//
+                    AlertDialog.Builder busyDialogBuilder = new AlertDialog.Builder(getContext());
+                    busyDialogBuilder.setMessage("You've already had work during this time. Are you sure adding more?")
+                            .setTitle("Busy Time Alert!");
+                    busyDialogBuilder.setPositiveButton("Yes", (busydialog, which12) -> {
+                        Log.d("Yes button-----------------==================", "");
+                        // Busy but continue
+                        taskViewModel.insertTask(newTask);
+                        todoTaskList.setValue(taskViewModel.getToDoTasks().getValue());
+                        busydialog.dismiss();
+                        // clear all texts
+                        editName.getEditText().setText("");
+                        editDetails.getEditText().setText("");
+                        taskStartDate.setText("");
+                        taskDueDate.setText("");
+                    });
+                    busyDialogBuilder.setNegativeButton("Change date", (busydialog, which1) -> {
+                        Log.d("No button-----------------==================", "");
+                        busydialog.dismiss();
+                        if (dialogView.getParent() != null)
+                            ((ViewGroup) dialogView.getParent()).removeView(dialogView);
+                        alertDialog.show();
+                    });
+                    AlertDialog busyDialog = busyDialogBuilder.create();
+                    alertDialog.dismiss();
                     busyDialog.show();
-                    busyDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            taskViewModel.insertTask(newTask);
-                            busyDialog.dismiss();
-                            // clear all texts
-                            editName.getEditText().setText("");
-                            editDetails.getEditText().setText("");
-                            taskStartDate.setText("");
-                            taskDueDate.setText("");
-
-                            todoTaskList.setValue(taskViewModel.getToDoTasks().getValue());
-                            alertDialog.dismiss();
-                        }
-                    });
-                    busyDialogBuilder.setNegativeButton("Change Date", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            busyDialog.dismiss();
-                        }
-                    });
-
-                }else {
+                } else {
                     taskViewModel.insertTask(newTask);
                     // clear all texts
                     editName.getEditText().setText("");
@@ -294,6 +314,7 @@ public class TodoFragment extends Fragment {
                 }
             }
 
+
         });
         newTaskDialog.setNegativeButton("Cancel", (dialog, which) -> alertDialog.dismiss());
 //-----------------------Building and setting AlertDialog--------------end--------------------------------------------//
@@ -304,14 +325,20 @@ public class TodoFragment extends Fragment {
                 ((ViewGroup) dialogView.getParent()).removeView(dialogView);
             newTaskDialog.show();
         });
+
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         List<BusyTime> busyTodo = taskViewModel.getBusyInTodo();
         busyTodo.forEach(busyTime -> {
-            String startDate = busyTime.getDurationStartString().substring(0,6);
-            String endDate = busyTime.getDurationDueString().substring(0,6);
+            String startDate = busyTime.getDurationStartString().substring(0, 5);
+            String endDate = busyTime.getDurationDueString().substring(0, 5);
             String toastText = "You will be busy between " + startDate + " and " + endDate;
-            Toast.makeText(requireActivity().getApplication(),toastText,Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity().getApplication(), toastText, Toast.LENGTH_SHORT).show();
         });
-
 
     }
 }

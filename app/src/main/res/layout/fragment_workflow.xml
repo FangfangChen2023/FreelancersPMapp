@@ -14,47 +14,27 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:text="24/8"
-        android:textColor="@color/blue_gray_700"
+        android:textColor="@color/dark_blue"
         android:textSize="15sp" />
 
 
     <com.github.vipulasri.timelineview.TimelineView
         android:id="@+id/timeline"
         android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        app:endLineColor="@color/blue_gray_600"
+        android:layout_height="100dp"
+        app:endLineColor="@color/dark_blue"
         app:linePadding="5dp"
         app:lineWidth="2dp"
-        app:marker="@color/Aquamarine"
+        app:marker="@drawable/round_brightness_1_24"
         app:markerInCenter="false"
         app:markerSize="10dp"
-        app:startLineColor="@color/blue_gray_600" />
+        app:startLineColor="@color/dark_blue" />
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="vertical"-->
-<!--        >-->
-
-<!--        <com.google.android.material.card.MaterialCardView-->
-<!--            android:layout_width="100dp"-->
-<!--            android:layout_height="30dp"-->
-<!--            android:layout_marginBottom="5dp"-->
-<!--            app:cardElevation="0dp"-->
-<!--            app:cardCornerRadius="15dp"-->
-<!--            >-->
-<!--        <TextView-->
-<!--            android:id="@+id/tips"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:background="@color/blue_gray_200"-->
-<!--            android:gravity="center"-->
-<!--            android:text="To Do"-->
-<!--            android:textColor="@color/blue_gray_700"-->
-<!--            android:textSize="14sp"-->
-<!--            />-->
-<!--        </com.google.android.material.card.MaterialCardView>-->
-
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/detail_card"
             android:layout_width="300dp"
@@ -72,29 +52,11 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-<!--                    <TextView-->
-<!--                        android:id="@+id/actual_date"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text=""-->
-<!--                        android:textColor="@color/blue_gray_700"-->
-<!--                        android:textSize="10sp" />-->
-
-
-<!--                <androidx.appcompat.widget.AppCompatTextView-->
-<!--                    android:id="@+id/planning_time"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="2dp"-->
-<!--                    android:textColor="@color/blue_gray_500"-->
-<!--                    android:textSize="9sp"-->
-<!--                    tools:text="" />-->
-
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/task_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/blue_gray_700"
+                    android:textColor="@color/dark_blue"
                     tools:text="To Do"
                     android:textSize="13sp"
                     />
@@ -103,13 +65,33 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:textColor="@color/blue_gray_700"
+                    android:textColor="@color/dark_blue"
                     tools:text="Order Successfully Completed"
                     android:textSize="15sp"
                     />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-<!--    </LinearLayout>-->
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/busy_card"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/reply_orange_500"
+        app:cardCornerRadius="10dp"
+        app:contentPadding="8dp"
+        android:visibility="invisible"
+        >
+        <TextView
+            android:id="@+id/busy_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You are very busy between"
+            android:textColor="@color/deep_blue"
+            />
+    </com.google.android.material.card.MaterialCardView>
+
+
+    </LinearLayout>
 
 </LinearLayout>

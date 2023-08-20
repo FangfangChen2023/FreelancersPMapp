@@ -9,11 +9,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.chen.freelancerspmapp.R;
 import com.chen.freelancerspmapp.Entity.Project;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
 
-    List<Project> historyProjectList;
+    List<Project> historyProjectList = new ArrayList<>();
 
     public HistoryRecyclerAdapter(List<Project> historyProjectList) {
         this.historyProjectList = historyProjectList;

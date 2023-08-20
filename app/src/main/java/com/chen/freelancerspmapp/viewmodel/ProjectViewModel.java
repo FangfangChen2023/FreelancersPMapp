@@ -15,6 +15,7 @@ import com.chen.freelancerspmapp.Repository.ProjectRepositoryImpl;
 import com.chen.freelancerspmapp.Repository.RepositoryCallback;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,21 +39,14 @@ public class ProjectViewModel extends AndroidViewModel {
             throw new RuntimeException();
         }
 
-//        projectRepository.queryAllProjects(new RepositoryCallback() {
-//            @Override
-//            public void onComplete(LiveData queryResult) {
-//                Log.d("queryResult: ++++++++++++++", String.valueOf(queryResult.getValue()));
-//                allProjects = queryResult;
-//            }
-//        });
         currentProj = new MutableLiveData<>();
         historyProj = new MutableLiveData<>();
 
         // TODO : test data
         if(allProjects == null || allProjects.getValue() == null || allProjects.getValue().size() == 0){
-//            Project project = new Project("New Project", "Details", "22/07/2023", "31/08/2023", 0);
-//            insertProject(project);
+
         }else {
+
             categorizeProjects();
         }
     }
@@ -85,7 +79,6 @@ public class ProjectViewModel extends AndroidViewModel {
                 }
             });
             currentProj.setValue(tempCurrent);
-            currentProj.getValue().forEach((project -> Log.d(project.getProjectID()+"#####categorizeProjects#####", project.getName())));
             historyProj.setValue(tempHistory);
         }
 
@@ -97,12 +90,9 @@ public class ProjectViewModel extends AndroidViewModel {
 
     public Future getAllProjectsFromDB() {
         // Using Future to make threads run in order
-        Future future = projectRepository.queryAllProjects(new RepositoryCallback() {
-            @Override
-            public void onComplete(LiveData queryResult) {
-                allProjects = queryResult;
-                allProjects.getValue().forEach((project -> Log.d(project.getProjectID()+">>>>>", project.getName())));
-            }
+        Future future = projectRepository.queryAllProjects(queryResult -> {
+            allProjects = queryResult;
+//                allProjects.getValue().forEach((project -> Log.d(project.getProjectID()+">>>>>", project.getName())));
         });
         return future;
     }

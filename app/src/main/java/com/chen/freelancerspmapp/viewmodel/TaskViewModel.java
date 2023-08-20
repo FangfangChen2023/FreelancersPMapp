@@ -3,6 +3,7 @@ package com.chen.freelancerspmapp.viewmodel;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -34,9 +35,11 @@ public class TaskViewModel extends AndroidViewModel {
     private List<BusyTime> busyInDoing = new ArrayList<>();
     private List<BusyTime> busyInDone = new ArrayList<>();
     private long projectID;
+    private Application application;
 
     public TaskViewModel(@NonNull Application application, Long projectID) {
         super(application);
+        this.application = application;
         this.projectID = projectID;
         taskRepository = new TaskRepositoryImpl(application);
         initializeLists(projectID);
@@ -156,6 +159,10 @@ public class TaskViewModel extends AndroidViewModel {
     }
 
     public void checkHeavyWorkload() {
+        busyInTodo.clear();
+        busyInDoing.clear();
+        busyInDone.clear();
+
         // to do
         List<Task> todoList = todoTasks.getValue();
         for (int i = 0; i < todoList.size() - 1; i++) {
@@ -177,6 +184,7 @@ public class TaskViewModel extends AndroidViewModel {
             busyInTodo.add(busyTime);
         }
         // doing
+
         List<Task> doingList = doingTasks.getValue();
         for (int i = 0; i < doingList.size() - 1; i++) {
             Range<Long> actualRange = Range.between(doingList.get(i).getActualStartDate(), doingList.get(i).getPlanningDueDate());
@@ -198,6 +206,7 @@ public class TaskViewModel extends AndroidViewModel {
         }
 
         // done
+
         List<Task> doneList = doneTasks.getValue();
         for (int i = 0; i < doneList.size() - 1; i++) {
             Range<Long> actualRange = Range.between(doneList.get(i).getActualStartDate(), doneList.get(i).getActualDueDate());
@@ -216,7 +225,7 @@ public class TaskViewModel extends AndroidViewModel {
             busyTime.addRelatedTask(doneList.get(i).getTaskID());
             busyTime.addRelatedTask(doneList.get(i+1).getTaskID());
             busyInDone.add(busyTime);
-
+//            Toast.makeText(application,"busyInDoing----------------------->"+busyInDoing.size(),Toast.LENGTH_SHORT).show();
         }
 
     }

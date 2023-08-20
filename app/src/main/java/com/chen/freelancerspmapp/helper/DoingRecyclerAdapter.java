@@ -42,7 +42,7 @@ public class DoingRecyclerAdapter extends RecyclerView.Adapter<TaskRecyclerViewH
     public void onBindViewHolder(@NonNull TaskRecyclerViewHolder holder, @SuppressLint("RecyclerView") int position) {
         if(doingTaskList != null && doingTaskList.size() != 0){
             holder.itemName.setText(doingTaskList.get(position).getName());
-            holder.imageView.setImageResource(R.drawable.baseline_access_time_24);
+            holder.imageView.setImageResource(R.drawable.baseline_update_24);
             holder.planningDate.setText(doingTaskList.get(position).getPlanningDateToString());
             String startDate = simpleDateFormat.format(new Date(doingTaskList.get(position).getActualStartDate()));
             holder.actualDate.setVisibility(View.VISIBLE);

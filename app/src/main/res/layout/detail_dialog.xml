@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="15dp"
+    android:gravity="center"
+    android:layout_gravity="center"
+    >
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/detail_card"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        app:cardElevation="0dp"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <EditText
+                android:id="@+id/task_name"
+                android:layout_height="48dp"
+                android:layout_width="match_parent"
+                android:inputType="text"
+                android:text="Task Name"
+                android:textColor="@color/dark_brown"
+                android:background="@null"
+                />
+        <TextView
+            android:id="@+id/belongs_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Project"
+            android:textSize="15sp"
+            android:textColor="@color/dark_brown"
+            android:layout_marginBottom="5dp"
+            />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Planning date:"
+                android:textSize="13sp"
+                android:textColor="@color/dark_brown"
+                android:drawableStart="@drawable/baseline_calendar_month_24"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:layout_marginVertical="5dp"
+                />
+
+                <TextView
+                    android:id="@+id/planning"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="24/08/2023 - 24/08/2023"
+                    android:textSize="13sp"
+                    android:textColor="@color/dark_brown"
+                    android:gravity="center_vertical"
+                    />
+
+            <TextView
+                android:id="@+id/actual_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Actual date:"
+                android:textSize="13sp"
+                android:textColor="@color/dark_brown"
+                android:drawableStart="@drawable/baseline_calendar_month_24"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:layout_marginVertical="5dp"
+                />
+
+                <TextView
+                    android:id="@+id/real"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="24/08/2023 - 24/08/2023"
+                    android:textSize="13sp"
+                    android:textColor="@color/dark_brown"
+                    android:gravity="center_vertical"
+                    />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Description:"
+                            android:textSize="15sp"
+                            android:textColor="@color/dark_brown"
+                            android:layout_marginTop="15dp"
+                            />
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:boxStrokeColor="@color/dark_brown"
+                app:boxStrokeWidth="1dp"
+                android:layout_marginTop="5dp"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:hint="This is for description."
+                    android:textAlignment="textStart"
+                    android:textColor="@color/dark_brown" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

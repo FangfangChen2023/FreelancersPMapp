@@ -22,10 +22,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chen.freelancerspmapp.Entity.Project;
+import com.chen.freelancerspmapp.Entity.Task;
 import com.chen.freelancerspmapp.helper.TabViewPageAdapter;
 import com.chen.freelancerspmapp.viewmodel.MyViewModelFactory;
 import com.chen.freelancerspmapp.viewmodel.ProjectViewModel;
@@ -33,6 +35,7 @@ import com.chen.freelancerspmapp.viewmodel.SharedViewModel;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.SimpleDateFormat;
@@ -55,7 +58,7 @@ public class HomeFragment extends Fragment {
     Button btnNewProject;
     Button newProjBtnInEmptyPage;
     Toolbar toolBar;
-    private MutableLiveData<List<Project>> projectsMenu;
+    private MutableLiveData<List<Project>> projectsList;
     private Project currentProj;
     private SharedViewModel sharedViewModel;
     private ProjectViewModel projectViewModel;
@@ -67,6 +70,7 @@ public class HomeFragment extends Fragment {
     private Long dueDateLong;
     private String DatePattern = "MM-dd-yyyy";
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DatePattern);
+    private View projDetailView;
     public HomeFragment() {
 //        this.sharedPreferences = sharedPreferences;
     }
@@ -87,7 +91,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        projectsMenu = new MutableLiveData<>(new ArrayList<>());
+        projectsList = new MutableLiveData<>(new ArrayList<>());
         myViewModelFactory = new MyViewModelFactory(requireActivity().getApplication());
         sharedViewModel = new ViewModelProvider(this, myViewModelFactory).get(SharedViewModel.class);
 
@@ -107,6 +111,22 @@ public class HomeFragment extends Fragment {
         btnChangeProj = view.findViewById(R.id.button_change_project);
         toolBar = view.findViewById(R.id.home_toolbar);
 
+        projectViewModel.getCurrentProjects().observe(getViewLifecycleOwner(), projects -> projectsList.setValue(projects));
+
+
+        projDetailView = inflater.inflate(R.layout.detail_dialog, container, false);
+        AlertDialog projDetailDialog;
+        AlertDialog.Builder detailDialogBuilder = new AlertDialog.Builder(getContext());
+        detailDialogBuilder.setCancelable(true);
+        detailDialogBuilder.setView(projDetailView);
+        detailDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        projDetailDialog = detailDialogBuilder.create();
+
 
 //-----------------------Building and setting AlertDialog------start----------------------------------------------------//
         AlertDialog alertDialog;
@@ -123,6 +143,7 @@ public class HomeFragment extends Fragment {
         btnDatePicker.setOnClickListener(v -> {
             MaterialDatePicker.Builder<Pair<Long, Long>> builder = MaterialDatePicker.Builder.dateRangePicker();
             builder.setTitleText("Project Start and Due Date");
+            builder.setTheme(R.style.ThemeOverlay_App_MaterialCalendar);
              MaterialDatePicker<Pair<Long, Long>> dateRangePicker = builder.build();
             dateRangePicker.addOnPositiveButtonClickListener(selection -> {
                 startDateLong = selection.first;
@@ -160,14 +181,12 @@ public class HomeFragment extends Fragment {
                 Project newProj = new Project(projName, projDetails, startDateLong, dueDateLong, 0);
                 projectViewModel.insertProject(newProj);
 
-                projectsMenu.setValue(projectViewModel.getCurrentProjects().getValue());
+                projectsList.setValue(projectViewModel.getCurrentProjects().getValue());
 
-                currentProj = projectsMenu.getValue().get(projectsMenu.getValue().size() - 1);
+                currentProj = projectsList.getValue().get(projectsList.getValue().size() - 1);
                 sharedViewModel.setCurrentProj(currentProj);
-                Log.d("getting current ID from home fragment()()()()()()()()()()()()()()", sharedViewModel.getCurrentProj().getValue().getProjectID().toString());
 
                 toolBar.setTitle(currentProj.getName());
-
                 toolBar.setSubtitle(simpleDateFormat.format(new Date(currentProj.getPlanningStartDate())) + " - " + simpleDateFormat.format(new Date(currentProj.getPlanningDueDate())));
 
                 if (emptyPage.getVisibility() == View.VISIBLE) {
@@ -222,30 +241,27 @@ public class HomeFragment extends Fragment {
             projectsPopupMenu.getMenuInflater().inflate(R.menu.home_projects_list, projectsPopupMenu.getMenu());
             projectsPopupMenu.getMenu().clear();
 
-            projectsMenu.setValue(projectViewModel.getCurrentProjects().getValue());
+            projectsList.setValue(projectViewModel.getCurrentProjects().getValue());
 
-            projectsMenu.getValue().forEach((project) -> {
+            projectsList.getValue().forEach((project) -> {
                 if (currentProj.getProjectID() != project.getProjectID()) {
                     projectsPopupMenu.getMenu().add(Menu.NONE, Math.toIntExact(project.getProjectID()), Menu.NONE, project.getName());
                 }
             });
-            projectsPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    projectsMenu.getValue().forEach((project -> {
-                        if (project.getProjectID() == item.getItemId()) {
-                            currentProj = project;
+            projectsPopupMenu.setOnMenuItemClickListener(item -> {
+                projectsList.getValue().forEach((project -> {
+                    if (project.getProjectID() == item.getItemId()) {
+                        currentProj = project;
 
-                            toolBar.setTitle(currentProj.getName());
-                            toolBar.setSubtitle(simpleDateFormat.format(new Date(currentProj.getPlanningStartDate())) + " - " + simpleDateFormat.format(new Date(currentProj.getPlanningDueDate())));
-                            projectsPopupMenu.getMenu().removeItem(item.getItemId());
+                        toolBar.setTitle(currentProj.getName());
+                        toolBar.setSubtitle(simpleDateFormat.format(new Date(currentProj.getPlanningStartDate())) + " - " + simpleDateFormat.format(new Date(currentProj.getPlanningDueDate())));
+                        projectsPopupMenu.getMenu().removeItem(item.getItemId());
 
-                            sharedViewModel.setCurrentProj(currentProj);
-                        }
-                    }));
+                        sharedViewModel.setCurrentProj(currentProj);
+                    }
+                }));
 
-                    return true;
-                }
+                return true;
             });
             projectsPopupMenu.show();
         });
@@ -285,16 +301,16 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        projectsMenu.setValue(projectViewModel.getCurrentProjects().getValue());
+        projectsList.setValue(projectViewModel.getCurrentProjects().getValue());
 
 
         // -------------------first time loading views checking
-        if (projectsMenu.getValue() == null || projectsMenu.getValue().size() == 0) {
+        if (projectsList.getValue() == null || projectsList.getValue().size() == 0) {
             emptyPage.setVisibility(View.VISIBLE);
 
         } else {
             if (currentProj == null) {
-                currentProj = projectsMenu.getValue().get(projectsMenu.getValue().size() - 1);
+                currentProj = projectsList.getValue().get(projectsList.getValue().size() - 1);
             }
             toolBar.setTitle(currentProj.getName());
             toolBar.setSubtitle(simpleDateFormat.format(new Date(currentProj.getPlanningStartDate())) + " - " + simpleDateFormat.format(new Date(currentProj.getPlanningDueDate())));
@@ -302,6 +318,43 @@ public class HomeFragment extends Fragment {
             projNotEmpty.setVisibility(View.VISIBLE);
             btnNewProject.setVisibility(View.VISIBLE);
         }
+
+        toolBar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()){
+                case R.id.project_details:
+                    EditText title = projDetailView.findViewById(R.id.task_name);
+                    title.setText(currentProj.getName());
+                    TextView proj = projDetailView.findViewById(R.id.belongs_to);
+                    proj.setVisibility(View.GONE);
+                    TextView planning = projDetailView.findViewById(R.id.planning);
+                    planning.setText(currentProj.getPlanningDateToString());
+                    TextInputEditText detail = projDetailView.findViewById(R.id.description);
+                    detail.setText(currentProj.getDetails());
+
+                    TextView real = projDetailView.findViewById(R.id.real);
+                    TextView actual = projDetailView.findViewById(R.id.actual_text);
+                    real.setVisibility(View.GONE);
+                    actual.setVisibility(View.GONE);
+                    projDetailDialog.show();
+                    break;
+                case R.id.mark_as_done:
+                    Project doneProj = currentProj;
+                    doneProj.setStatus(1);
+                    projectViewModel.updateProject(doneProj);
+                    List<Project> temp = projectsList.getValue();
+                    for (Project project : temp){
+                        if(currentProj.getProjectID() == project.getProjectID()){
+                            temp.remove(project);
+                            projectsList.setValue(temp);
+                        }
+                    }
+                 if(temp.size() == 0){
+                     // TODO reload the fragment
+                 }
+
+            }
+            return true;
+        });
 
         return view;
     }

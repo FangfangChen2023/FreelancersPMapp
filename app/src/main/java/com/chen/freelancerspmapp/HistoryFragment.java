@@ -34,7 +34,6 @@ public class HistoryFragment extends Fragment {
     private ProjectViewModel projectViewModel;
     private View emptyHistory;
 
-    private SharedPreferences sharedPreferences;
 
     public HistoryFragment() {
     }

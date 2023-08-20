@@ -5,9 +5,11 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Entity(tableName = "project_table")
 public class Project {
@@ -101,4 +103,16 @@ public class Project {
     public void setActualDueDate(@Nullable Long actualDueDate) {
         this.actualDueDate = actualDueDate;
     }
+
+    public String getPlanningDateToString() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String startDate = simpleDateFormat.format(new Date(planningStartDate));
+        String dueDate = simpleDateFormat.format(new Date(planningDueDate));
+
+        long days = TimeUnit.MILLISECONDS.toDays(planningDueDate - planningStartDate);
+        String planningDuration = "  (" + days + " days)";
+
+        return "Planning Date:  " + startDate + " - " + dueDate + planningDuration;
+    }
+
 }

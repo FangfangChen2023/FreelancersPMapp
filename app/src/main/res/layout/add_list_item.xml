@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="New Task"
-            android:textColor="@color/blue_gray_400"
+            android:textColor="@color/deep_blue"
             android:textSize="25dp"
             android:gravity="center"
             android:outlineProvider="none"

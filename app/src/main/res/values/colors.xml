@@ -20,4 +20,17 @@
     <!--    custom themes 2-->
     <color name="Aquamarine">#1CA8E0</color>
     <color name="Turquoise">#3CC4F0</color>
+
+    <color name="yellow_50">#FFFDE7</color>
+    <color name="light_yellow">#FFE3B3</color>
+    <color name="soft_yellow">#FFC872</color>
+    <color name="soft_green">#97DBAE</color>
+    <color name="light_blue">#B7EDFF</color>
+    <color name="light_blue_50">#E1F5FE</color>
+    <color name="soft_blue">#75BDE0</color>
+    <color name="bright_blue">#30A0E0</color>
+    <color name="deep_blue">#006BBB</color>
+    <color name="dark_blue">#2E4583</color>
+    <color name="pink_purple">#DD4470</color>
+    <color name="dark_brown">#3E2723</color>
 </resources>
